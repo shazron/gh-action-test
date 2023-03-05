@@ -1,0 +1,26 @@
+name: manual-run
+on:
+  workflow_dispatch:
+    inputs:
+      pluginsValue: # github.event.inputs.pluginsValue
+        description: 'the foo.plugins array value to set'
+        required: true
+        default: "[\"@scope/bar\"]"
+jobs:
+  checkout:
+    name: checkout
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - name: Update package.json foo.plugins
+        uses: jossef/action-set-json-field@v2.1
+        with:
+          file: package.json
+          field: foo.plugins
+          value: ${{ github.event.inputs.pluginsValue }}
+          parse_json: true
+      - run: |
+          cat package.json
